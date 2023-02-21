@@ -1,0 +1,90 @@
+<html>
+	<head>
+		<style type="text/css">
+		.name {
+			font-weight: bold;
+			font-family: Arial;
+			font-size: 14px;
+			float: left;
+			<!--margin: 4px 2px 0px 5px;-->
+		}
+		
+		.cost{
+			font-family: Arial;
+			font-size: 14px;
+			float:right;
+			text-align: right;
+		}
+		.oracle{
+			float: left;
+			font-family: Arial;
+			font-size: 12px;
+			margin: 3px 0px;
+		}
+		.typeline{
+			font-size: 14px;
+			font-family: Arial;
+			margin: 3px 0px;
+		}
+		
+		.border {
+			width: 200px;
+			height: 300px;
+			border: 2px solid #000;
+		}
+		.pt{
+			bottom: 0px;
+			text-align:right;
+		}
+		
+		.card{
+			display: inline-block;
+			margin: 2px 5px;
+		}
+		</style>
+	</head>
+	<div class="border">
+		<div class="card">
+			<div class="cost">{3}{W}{U}{B}{R}{G}</div>
+			<div class="name">Coalition Victory</div>
+			<div style="display: inline-block">
+			<span class="typeline">Sorcery</span>
+			<span class="oracle">You win the game if you control a land of each basic land type and a creature of each color.</span>
+			</div>
+		</div>
+	</div>
+	<div class="border">
+	<!-- make a flexbox,with oracle having flex-grow:1
+			also lay out the card grid in a flexbox-->
+		<div class="card">
+			<div class="cost">{3}{W}</div>
+			<div class="name">Crush Contraband</div>
+			<span class="typeline">Instant</span><br>
+			<span class="oracle">You win the game</span>
+		</div>
+	</div>
+	</div>
+	<div class="border">
+		<div class="card">
+			<div class="cost">{5}{B}{G}{W}</div>
+			<div class="name">Karador, Ghost Chieftain</div>
+			<div style="display: inline-block">
+			<span class="typeline">Legendary Creature — Centaur Spirit</span><br>
+			<span class="oracle"><p>This spell costs {1} less to cast for each creature card in your graveyard.</p>
+
+<p>During each of your turns, you may cast one creature card from your graveyard.</p></span>
+			<div class="pt">3/4</div>
+			</div>
+		</div>
+	</div>
+	<div class="border">
+		<div class="card">
+			<div class="cost">{1}{B}</div>
+			<div class="name">Animate Dead</div>
+			<span class="typeline">Enchantment — Aura</span><br>
+			<span class="oracle">Enchant creature card in a graveyard<br><br>
+			When Animate Dead enters the battlefield, if it’s on the battlefield, it loses “enchant creature card in a graveyard” and gains “enchant creature put onto the battlefield with Animate Dead.” Return enchanted creature card to the battlefield under your control and attach Animate Dead to it. When Animate Dead leaves the battlefield, that creature’s controller sacrifices it.<br><br>
+			Enchanted creature gets -1/-0.</span>
+		</div>
+	</div>
+</html>
