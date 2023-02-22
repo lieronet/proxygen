@@ -6,77 +6,84 @@
 }
 <html>
 <head>
-	<style type="text/css">
-		.name {
-			font-weight: bold;
-			font-family: Arial;
-			font-size: 14px;
-			float: left;
-			<!-- margin: 4px 2px 0px 5px; -->
-		}
+    <style type="text/css">
+        .name {
+            font-weight: bold;
+            font-family: Arial;
+            font-size: 14px;
+            float: left;
+            <!-- margin: 4px 2px 0px 5px; -->
+        }
 
-		.cost {
-			font-family: Arial;
-			font-size: 14px;
-			float: right;
-			text-align: right;
-		}
+        .cost {
+            font-family: Arial;
+            font-size: 14px;
+            float: right;
+            text-align: right;
+        }
 
-		.typeline {
-			font-size: 14px;
-			font-family: Arial;
-			margin: 3px 0px;
-		}
+        .typeline {
+            font-size: 14px;
+            font-family: Arial;
+            margin: 3px 0px;
+        }
 
-		.oracle {
-			float: left;
-			font-family: Arial;
-			font-size: 12px;
-			margin: 3px 0px;
-		}
+        .oracle {
+            float: left;
+            font-family: Arial;
+            font-size: 12px;
+            margin: 3px 0px;
+        }
 
-		.border {
-			width: 200px;
-			height: 300px;
-			border: 2px solid #000;
-		}
+        .border {
+            width: 200px;
+            height: 300px;
+            border: 2px solid #000;
+        }
+        
+        .pt {
+            position:absolute;
+            bottom:2px;
+            right:0px;
+            text-align: right;            
+        }
 
-		.pt {
-			bottom: 0px;
-			text-align: right;
-		}
-
-		.card {
-			display: inline-block;
-			margin: 2px 5px;
-		}
-
-		.theBOX{
-			display:flex;
-			flex-flow:row;
-			gap: 4px;
-		}
-	</style>
+        .card {
+            display: inline-block;
+            margin: 2px 5px;
+            position:relative;
+            height:300px;
+        }
+        
+        .theBOX {
+            width:650px;
+            display: flex;
+            flex-direction: row;
+            flex-wrap:wrap;
+            gap: 4px;
+        }
+    </style>
 </head>
 <div class="theBOX">
-@foreach(var card in Model.Proxies)
-{
-<div class="border">
-	<div class="card">
-		<div class="name">@card.Name</div>
-		<div class="cost">@card.ManaCost</div>
-		<br>
-		<span class="typeline">@card.TypeLine</span>
-				<div style="display: inline-block">
-					<span class="oracle">
-					@foreach(var line in card.OracleText)
-					{
-						<p>@line</p>
-					}
-					</span>
-		</div>
-	</div>
-	</div>
-}
+    @foreach (var card in Model.Proxies)
+    {
+        <div class="border">
+            <div class="card">
+                <div class="name">@card.Name</div>
+                <div class="cost">@card.ManaCost</div>
+                <br>
+                <span class="typeline">@card.TypeLine</span>
+                <div style="display: inline-block">
+                    <span class="oracle" >
+                        @foreach (var line in card.OracleText)
+                        {
+                            <p>@line</p>
+                        }
+                    </span>
+                </div>
+                <div class="pt">@card.PtOrLoyalty</div>
+            </div>
+        </div>
+    }
 </div>
 </html>

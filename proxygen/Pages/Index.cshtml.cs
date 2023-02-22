@@ -30,6 +30,7 @@ namespace proxygen.Pages
         [BindProperty]
         public string Input { get; set; }
 
+        //TODO: error messaging
         public async Task<RedirectToPageResult> OnPostAsync()
         {
             List<SanitizedCardsToPrint> cards = ParseInput();
@@ -93,19 +94,20 @@ namespace proxygen.Pages
 
                 var result = await scryfallClient.SendAsync(request);
 
-                if (result.IsSuccessStatusCode)
+                if (!result.IsSuccessStatusCode) continue;
+                
+                var resultString = await result.Content.ReadAsStringAsync();
+                var resultsList = Newtonsoft.Json.JsonConvert.DeserializeObject<ScryfallResultsObject>(resultString);
+
+                var card = resultsList.data
+                    .SingleOrDefault(x => x.name.ToLower() == cardPair.CardName.ToLower());
+
+                //todo: handle DFCs better
+                if (card == null) continue;
+
+                for(var i = 0; i < cardPair.CardsToPrint; i++)
                 {
-                    var resultString = await result.Content.ReadAsStringAsync();
-                    var resultsList = Newtonsoft.Json.JsonConvert.DeserializeObject<ScryfallResultsObject>(resultString);
-
-                    var card = resultsList.data
-                        .Where(x => x.name.ToLower() == cardPair.CardName.ToLower())
-                        .SingleOrDefault();
-
-                    for(var i = 0; i < cardPair.CardsToPrint; i++)
-                    {
-                        resultsObject.Add(new ProxyPageModel(card));
-                    }
+                    resultsObject.Add(new ProxyPageModel(card));
                 }
             }
 
