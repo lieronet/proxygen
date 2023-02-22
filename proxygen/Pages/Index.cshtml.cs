@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace proxygen.Pages
@@ -29,25 +30,29 @@ namespace proxygen.Pages
         [BindProperty]
         public string Input { get; set; }
 
-        public async Task OnPostAsync()
+        public async Task<RedirectToPageResult> OnPostAsync()
         {
-            List<CardsModel> cards = ParseInput();
+            List<SanitizedCardsToPrint> cards = ParseInput();
 
-            BuildModel(cards);
             // pass cards to the method that will grab text
             // method will check cache for text, then fall back on the Scryfall API
             // maybe I'll pass a list of Not Found cards to the end user as well, to give them feedback
             // and to give me test cases to run
 
             // then redirect to the output page, passing along the list of cards
+
+			TempData["cards"] = JsonSerializer.Serialize(await BuildModel(cards));
+
+            return RedirectToPage("Proxies");
         }
 
-        private List<CardsModel> ParseInput()
+        //todo: move me somewhere else
+        private List<SanitizedCardsToPrint> ParseInput()
         {
             // probably going to need to account for multiple newline characters - we'll see how that goes
             List<string> rawCards = new List<string>(Input.Split(Environment.NewLine));
 
-            List<CardsModel> cards = new List<CardsModel>();
+            List<SanitizedCardsToPrint> cards = new List<SanitizedCardsToPrint>();
 
             foreach (var pair in rawCards)
             {
@@ -55,7 +60,7 @@ namespace proxygen.Pages
                 // maybe I'll fix, maybe I won't
                 if (int.TryParse(pair.Substring(0, Math.Max(pair.IndexOf(' '), 0)), out int num))
                 {
-                    cards.Add(new CardsModel
+                    cards.Add(new SanitizedCardsToPrint
                     {
                         CardsToPrint = num,
                         CardName = pair.Substring(pair.IndexOf(' ')).Trim()
@@ -63,7 +68,7 @@ namespace proxygen.Pages
                 }
                 else
                 {
-                    cards.Add(new CardsModel
+                    cards.Add(new SanitizedCardsToPrint
                     {
                         CardsToPrint = 1,
                         CardName = pair.Trim()
@@ -74,13 +79,13 @@ namespace proxygen.Pages
             return cards;
         }
 
-        private async void BuildModel(List<CardsModel> cardsToRun)
+        private async Task<List<ProxyPageModel>> BuildModel(List<SanitizedCardsToPrint> cardsToRun)
         {
             //TODO: check cache
 
             var scryfallClient = _clientFactory.CreateClient();
 
-            var resultsObject = new ProxyViewModel();
+            var resultsObject = new List<ProxyPageModel>();
 
             foreach (var cardPair in cardsToRun)
             {
@@ -97,13 +102,14 @@ namespace proxygen.Pages
                         .Where(x => x.name.ToLower() == cardPair.CardName.ToLower())
                         .SingleOrDefault();
 
-                    resultsObject.Cards.Add(new CardProxies()
+                    for(var i = 0; i < cardPair.CardsToPrint; i++)
                     {
-                        NumToPrint = cardPair.CardsToPrint.GetValueOrDefault(),
-                        Card = card
-                    });
+                        resultsObject.Add(new ProxyPageModel(card));
+                    }
                 }
             }
+
+            return resultsObject;
         }
     }
 }
