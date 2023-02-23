@@ -17,9 +17,13 @@ jobs:
           uses: actions/setup-dotnet@v3.0.3
           with:
             dotnet-version: '7.x'
+        
+        - name: Navigate to project folder
+          run: cd proxygen 
+            
         # publishes project to the release-folder
         - name: Publish .NET Core Project
-          run: cd proxygen dotnet publish "/proxygen/proxygen.csproj" -c Release -o release --nologo
+          run: dotnet publish "/proxygen/proxygen.csproj" -c Release -o release --nologo
     
         # changes the base-tag in index.html from '/' to 'proxygen' to match GitHub Pages repository subdirectory
         - name: Change base-tag in index.html from / to proxygen
