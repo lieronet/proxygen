@@ -23,9 +23,17 @@ namespace proxygen.Pages
             _logger = logger;
         }
 
+        public string Cards { get; set; }
         public void OnGet()
         {
+            var randy = new Random();
 
+            Cards = "CARDS";
+
+            for (int i = 0; i < randy.Next(1, 10); i++)
+            {
+                Cards += "CARDS";
+            }
         }
 
         [BindProperty]
