@@ -6,7 +6,6 @@
 .vs/
 /bin
 /obj
-/wwwroot
 /Properties
 /bin/Debug/netcoreapp3.1/proxygen.Views.pdb
 /bin/Debug/netcoreapp3.1/proxygen.Views.dll

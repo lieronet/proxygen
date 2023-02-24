@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
-using proxygen.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using proxygen.Models;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace proxygen.Pages
 {
@@ -97,7 +98,7 @@ namespace proxygen.Pages
                 if (!result.IsSuccessStatusCode) continue;
                 
                 var resultString = await result.Content.ReadAsStringAsync();
-                var resultsList = Newtonsoft.Json.JsonConvert.DeserializeObject<ScryfallResultsObject>(resultString);
+                var resultsList = JsonConvert.DeserializeObject<ScryfallResultsObject>(resultString);
 
                 var card = resultsList.data
                     .SingleOrDefault(x => x.name.ToLower() == cardPair.CardName.ToLower());

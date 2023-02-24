@@ -11,6 +11,7 @@ namespace proxygen.Models
 
     public class ScryfallCardModel
     {
+        public List<ScryfallCardModel> card_faces { get; set; }
         public string name { get; set; }
         public string oracle_text { get; set; }
         public string power { get; set; }

@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
-using proxygen.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text.Json;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using proxygen.Models;
 
 namespace proxygen.Pages
 {
