@@ -42,6 +42,8 @@ namespace proxygen.Pages
         //TODO: error messaging
         public async Task<RedirectToPageResult> OnPostAsync()
         {
+            if (string.IsNullOrWhiteSpace(Input)) return RedirectToPage("Index");
+
             List<SanitizedCardsToPrint> cards = ParseInput();
 
             // pass cards to the method that will grab text
