@@ -53,7 +53,7 @@ namespace proxygen.Pages
 
             // then redirect to the output page, passing along the list of cards
 
-			TempData["cards"] = JsonSerializer.Serialize(await BuildModel(cards));
+            TempData["cards"] = JsonSerializer.Serialize(await BuildModel(cards));
 
             return RedirectToPage("Proxies");
         }
@@ -62,9 +62,9 @@ namespace proxygen.Pages
         private List<SanitizedCardsToPrint> ParseInput()
         {
             // probably going to need to account for multiple newline characters - we'll see how that goes
-            List<string> rawCards = new List<string>(Input.Split(Environment.NewLine));
+            List<string> rawCards = new(Input.Split(Environment.NewLine));
 
-            List<SanitizedCardsToPrint> cards = new List<SanitizedCardsToPrint>();
+            List<SanitizedCardsToPrint> cards = new();
 
             foreach (var pair in rawCards)
             {
@@ -101,28 +101,51 @@ namespace proxygen.Pages
 
             foreach (var cardPair in cardsToRun)
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, @$"https://api.scryfall.com/cards/search?q={"\"" + cardPair.CardName + "\"" }");
+                var request = new HttpRequestMessage(HttpMethod.Get, @$"https://api.scryfall.com/cards/search?q={"\"" + cardPair.CardName + "\""}");
 
                 var result = await scryfallClient.SendAsync(request);
 
                 if (!result.IsSuccessStatusCode) continue;
-                
+
                 var resultString = await result.Content.ReadAsStringAsync();
                 var resultsList = JsonConvert.DeserializeObject<ScryfallResultsObject>(resultString);
 
-                var card = resultsList.data
-                    .SingleOrDefault(x => x.name.ToLower() == cardPair.CardName.ToLower());
-
-                //todo: handle DFCs better
-                if (card == null) continue;
-
-                for(var i = 0; i < cardPair.CardsToPrint; i++)
+                if (resultsList.data.Any(x => x.card_faces != null))
                 {
-                    resultsObject.Add(new ProxyPageModel(card));
+                    resultsObject.AddRange(ParseDfcs(resultsList.data
+                        .FirstOrDefault(x => x.card_faces != null), cardPair.CardsToPrint ?? 1));
+                }
+                else
+                {
+                    var card = resultsList.data
+                        .SingleOrDefault(x => x.name.ToLower() == cardPair.CardName.ToLower());
+
+                    //shouldn't be an issue anymore but you never know
+                    if (card == null) continue;
+
+                    for (var i = 0; i < cardPair.CardsToPrint; i++)
+                    {
+                        resultsObject.Add(new ProxyPageModel(card));
+                    }
                 }
             }
 
             return resultsObject;
+        }
+
+        private IEnumerable<ProxyPageModel> ParseDfcs(ScryfallCardModel scryfallCardModel, int toPrint)
+        {
+            var results = new List<ProxyPageModel>();
+
+            for(int i = 0; i < toPrint; i++)
+            {
+                foreach(var card in scryfallCardModel.card_faces)
+                {
+                    results.Add(new ProxyPageModel(card));
+                }
+            }
+
+            return results;
         }
     }
 }
