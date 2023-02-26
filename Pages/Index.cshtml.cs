@@ -110,12 +110,7 @@ namespace proxygen.Pages
                 var resultString = await result.Content.ReadAsStringAsync();
                 var resultsList = JsonConvert.DeserializeObject<ScryfallResultsObject>(resultString);
 
-                if (resultsList.data.Any(x => x.card_faces != null))
-                {
-                    resultsObject.AddRange(ParseDfcs(resultsList.data
-                        .FirstOrDefault(x => x.card_faces != null), cardPair.CardsToPrint ?? 1));
-                }
-                else
+                if(resultsList.data.Any(x => x.name.ToLower() == cardPair.CardName.ToLower()))
                 {
                     var card = resultsList.data
                         .SingleOrDefault(x => x.name.ToLower() == cardPair.CardName.ToLower());
@@ -127,6 +122,11 @@ namespace proxygen.Pages
                     {
                         resultsObject.Add(new ProxyPageModel(card));
                     }
+                }
+                else if (resultsList.data.Any(x => x.card_faces != null))
+                {
+                    resultsObject.AddRange(ParseDfcs(resultsList.data
+                        .FirstOrDefault(x => x.card_faces != null), cardPair.CardsToPrint ?? 1));
                 }
             }
 
