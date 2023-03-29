@@ -123,10 +123,20 @@ namespace proxygen.Pages
                         resultsObject.Add(new ProxyPageModel(card));
                     }
                 }
-                else if (resultsList.data.Any(x => x.card_faces != null))
+                else if(resultsList.data.Any(x => x.card_faces != null))
                 {
-                    resultsObject.AddRange(ParseDfcs(resultsList.data
-                        .FirstOrDefault(x => x.card_faces != null), cardPair.CardsToPrint ?? 1));
+                    var card = resultsList.data
+                        .Where(x=>x.card_faces != null)
+                        .FirstOrDefault(x => x.card_faces.Any(y => 
+                        y.name.Equals(cardPair.CardName, StringComparison.OrdinalIgnoreCase)));
+
+                    if (card == null)
+                    {
+                        //nearest match
+                        card = resultsList.data.FirstOrDefault();
+                    }
+
+                    resultsObject.AddRange(ParseDfcs(card, cardPair.CardsToPrint ?? 1));
                 }
             }
 
