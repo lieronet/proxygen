@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +21,12 @@ namespace proxygen
         {
             services.AddRazorPages();
             services.AddHttpClient();
+            services.AddHttpClient("Scryfall", c =>
+            {
+                c.BaseAddress = new Uri("https://api.scryfall.com");
+                c.DefaultRequestHeaders.Add("Accept", "application/json");
+                c.DefaultRequestHeaders.Add("User-Agent", "proxygen/0.1");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

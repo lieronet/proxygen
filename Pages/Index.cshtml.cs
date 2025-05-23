@@ -95,13 +95,13 @@ namespace proxygen.Pages
         {
             //TODO: check cache
 
-            var scryfallClient = _clientFactory.CreateClient();
+            var scryfallClient = _clientFactory.CreateClient("Scryfall");
 
             var resultsObject = new List<ProxyPageModel>();
 
             foreach (var cardPair in cardsToRun)
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, @$"https://api.scryfall.com/cards/search?q={"\"" + cardPair.CardName + "\""}");
+                var request = new HttpRequestMessage(HttpMethod.Get, @$"/cards/search?q=""{cardPair.CardName}""");
 
                 var result = await scryfallClient.SendAsync(request);
 
@@ -110,10 +110,10 @@ namespace proxygen.Pages
                 var resultString = await result.Content.ReadAsStringAsync();
                 var resultsList = JsonConvert.DeserializeObject<ScryfallResultsObject>(resultString);
 
-                if(resultsList.data.Any(x => x.name.ToLower() == cardPair.CardName.ToLower()))
+                if(resultsList.data.Any(x => x.name.Equals(cardPair.CardName, StringComparison.CurrentCultureIgnoreCase)))
                 {
                     var card = resultsList.data
-                        .SingleOrDefault(x => x.name.ToLower() == cardPair.CardName.ToLower());
+                        .SingleOrDefault(x => x.name.Equals(cardPair.CardName, StringComparison.CurrentCultureIgnoreCase));
 
                     //shouldn't be an issue anymore but you never know
                     if (card == null) continue;
